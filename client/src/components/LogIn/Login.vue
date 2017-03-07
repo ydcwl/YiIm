@@ -5,11 +5,18 @@
     <div class="circle-big">
       <div class="circle-mid">
         <div class="circle-sma">
-          <div class="arrow"></div>
+          <img src="../../assets/login.png">
         </div>
       </div>
     </div>
     <div class="null"></div>
+    <div class="circle-big register">
+      <div class="circle-mid">
+        <div class="circle-sma">
+          <img src="../../assets/register.png" alt="">
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -35,14 +42,14 @@ export default {
     margin-left: -125px;
     margin-top: -40px;
     input{
-      border: 1px solid #ccc;
+      border: 0px solid #ccc;
       height: 35px;
       width: 100%;
       box-sizing: border-box;
       text-indent: 10px;
       outline: none;
       border-radius: 4px;
-      box-shadow: 0px 0px 2px 1px #ccc inset;
+      box-shadow: 0px 0px 3px 0px #38556A inset;
     }
     .user-name {
       margin-bottom: 10px;
@@ -50,7 +57,7 @@ export default {
     .circle-big{
       width: 60px;
       height: 60px;
-      background: #f0f0f0;
+      background: #4C6983;
       position: absolute;
       top: 50%;
       margin-top: -30px;
@@ -58,7 +65,7 @@ export default {
       margin-left: 95px;
       border-radius: 50%;
       text-align: center;
-      box-shadow: -1px 0px 2px 0px #ccc;
+      box-shadow: -1px 0px 3px 0px #4C6983;
       .circle-mid{
         width: 50px;
         height: 50px;
@@ -66,35 +73,44 @@ export default {
         background: #ddd;
         margin-top: 4px;
         margin-left: 4px;
-        border: 1px solid #ccc;
+        border: 1px solid #38556A;
         .circle-sma{
           width: 40px;
           height: 40px;
           border-radius: 50%;
-          background: skyblue;
+          background: #4C6983;
           margin-top: 5px;
           margin-left: 5px;
           position: relative;
-          .null{ }
-          .arrow{
-            border-top: 20px solid rgba(0,0,0,0);
-            border-left: 20px solid #ccc;
-            position: absolute;
-            top: 10px;
-            left: 5px;
-            transform:rotate(-135deg);
+          img{
+            width: 20px;
+            margin-top: 12px;
           }
+         }
+         .circle-sma:hover{
+           .arrow{
+            transform: rotate(225deg);
+            transition: transform 2s;
+           }
          }
       }
     }
     .null {
       width: 10px;
       height: 10px;
-      background: #f0f0f0;
+      background: #4C6983;
       left: 50%;
       margin-left: 88px;
       margin-top: -45px;
       position: absolute;
+    }
+    .register {
+      margin-top: 60px;
+      margin-left: -30px;
+      img{
+        margin-top: 10px !important;
+        margin-left: 2px;
+      }
     }
   }
 </style>

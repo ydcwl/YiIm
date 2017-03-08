@@ -12,20 +12,32 @@
     <div class="null"></div>
     <div class="circle-big register">
       <div class="circle-mid">
-        <div class="circle-sma">
+        <div class="circle-sma" @click="showRegisterPage">
           <img src="../../assets/register.png" alt="">
         </div>
       </div>
     </div>
+    <register :show="showRegister" @adduser="register"></register>
   </div>
 </template>
 
 <script>
+import Register from './Register'
 export default {
-  name: 'hello',
+  components: {
+    'register': Register
+  },
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      showRegister: false,
+    }
+  },
+  methods: {
+    register(data) {
+      console.log(data);
+    },
+    showRegisterPage() {
+      this.showRegister = true;
     }
   }
 }

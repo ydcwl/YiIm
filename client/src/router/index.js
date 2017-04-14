@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/LogIn/Login'
-import Register from '../components/LogIn/register.vue'
+import Login from '@/components/login/Login'
+import Register from '@/components/login/register.vue'
+import Panel from '@/components/chatview/panel.vue'
 
 
 Vue.use(Router)
@@ -9,14 +10,14 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'Login',
       component: Login
     },
     {
-      path: '/res',
-      name: 'Register',
-      component: Register
+      path: '/',
+      name: 'Panel',
+      component: Panel
     }
   ]
 })

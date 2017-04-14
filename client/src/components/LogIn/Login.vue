@@ -1,10 +1,10 @@
 <template>
   <div class="login-con">
-    <input type="text" class="user-name">
-    <input type="password" class="user-pw">
+    <input type="text" class="user-name" placeholder="用户名">
+    <input type="password" class="user-pw" placeholder="密码">
     <div class="circle-big">
       <div class="circle-mid">
-        <div class="circle-sma">
+        <div class="circle-sma" @click="postData">
           <img src="../../assets/login.png">
         </div>
       </div>
@@ -17,12 +17,12 @@
         </div>
       </div>
     </div>
-    <register :show="showRegister" @adduser="register"></register>
+    <register :show="showRegister" @adduser="register" @clickmask="hiddenRegisterPage"></register>
   </div>
 </template>
 
 <script>
-import Register from './Register'
+import Register from './register.vue'
 export default {
   components: {
     'register': Register
@@ -38,6 +38,12 @@ export default {
     },
     showRegisterPage() {
       this.showRegister = true;
+    },
+    hiddenRegisterPage() {
+      this.showRegister = false;
+    },
+    postData() {
+      //提交数据
     }
   }
 }

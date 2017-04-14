@@ -1,5 +1,5 @@
 <template>
-  <section class="register-mask" @click="hiddenMask" v-if="pageShow">
+  <section class="register-mask" @click="hiddenMask" v-if="isShow">
     <div class="register-con animated bounceInDown">
       <div class="upload-con">
         <input type="file" class="upload-img" v-on:change="uploadImg">
@@ -31,6 +31,11 @@ export default {
       pageShow: this.show
     }
   },
+  computed: {
+    isShow: function () {
+      return this.show;
+    }
+  },
   methods: {
     uploadImg () {
       var _this = this;
@@ -58,11 +63,11 @@ export default {
 
       } else {
         this.hiddenMask()
-        $emit('adduser', {userName: this.userName, userPW: this.userPW, userImg: this.userImg})
+        this.$emit('adduser', {userName: this.userName, userPW: this.userPW, userImg: this.userImg})
       }
     },
     hiddenMask () {
-      this.pageShow = false;
+      this.$emit('clickmask');
     }
   }
 }

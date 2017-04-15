@@ -2,17 +2,14 @@
   <section class="talk-view">
     <!--左边区域-->
     <div class="talk-view-left">
-      <p class="talk-user-list">
-        <img src="../../assets/logo.png"> 我走了<img src="../../assets/close.png" class="close-view">
-      </p>
-      <p class="talk-user-list">
-        <img src="../../assets/uploadImg.png"> 我走了<img src="../../assets/close.png" class="close-view">
+      <p class="talk-user-list" v-for="v of userList" @click="changeTalk(v.name, v.img)">
+        <img :src="v.img"> {{ v.name }}<img src="../../assets/close.png" class="close-view">
       </p>
     </div>
     <!--右边区域-->
     <div class="talk-view-right">
       <div class="header" @mousedown="down" @mousemove="move" @mouseup="up">
-        <img src="../../assets/uploadImg.png">我走了
+        <img :src="currentImg">{{ currentName }}
         <div class="window-tool-con">
           <img src="../../assets/reduce.png" alt="" class="window-tool">
           <img src="../../assets/close.png" alt="" class="window-tool">
@@ -24,9 +21,9 @@
       <div class="edit">
         <div class="talk-tool-con">
           <img src="../../assets/face.png">
-          <img src="../../assets/img.png">
+          <div class="upload-con"><input type="file" class="upload" @change="uploadImg"><img src="../../assets/img.png"></div>
         </div>
-        <div class="edit-text" contenteditable="true">
+        <div class="edit-text" contenteditable="true" @keyup.enter="send">
 
         </div>
       </div>
@@ -35,9 +32,34 @@
 </template>
 <script>
   export default {
+    mounted() {
+      let len = this.userList.length;
+      this.currentName = this.userList[len - 1].name;
+      this.currentImg = this.userList[len - 1].img;
+    },
     data() {
       return {
-        flag: false
+        flag: false,
+        userList: [{
+            name: '我走了',
+            img: '/static/img/uploadImg.png'
+          },
+          {
+            name: '我走了',
+            img: '/static/img/logo.png'
+          },
+          {
+            name: '我走了',
+            img: '/static/img/uploadImg.png'
+          },
+          {
+            name: '我走了',
+            img: '/static/img/uploadImg.png'
+          },
+        ],
+        currentName: '',
+        currentImg: '',
+        selectImg: ''
       }
     },
     methods: {
@@ -58,6 +80,39 @@
       up() {
         this.flag = false;
       },
+      changeTalk(name, img) {
+        this.currentName = name;
+        this.currentImg = img;
+      },
+      uploadImg() {
+        let _this = this;
+        let self = event.currentTarget;
+        let file = event.currentTarget.files[0];
+        let reader = new FileReader();
+
+        reader.onload = function () {
+          _this.selectImg = this.result;
+          let img = document.createElement('img');
+          img.src = _this.selectImg;
+          img.style.width = '30px';
+          img.style.height = '30px';
+          let edit = self.parentNode.parentNode.parentNode.children[1];
+          edit.appendChild(img);
+          file = '';
+        };
+        reader.readAsDataURL(file);
+
+      },
+      send() {
+        let self = event.currentTarget;
+        let text = self.innerHTML;
+        this.handerString(text);
+        self.innerHTML = '';
+      },
+      handerString(text) {
+        let has = /^\w*<img/.test(text);
+
+      }
     }
   }
 
@@ -101,17 +156,18 @@
     margin: 0px 5px;
     vertical-align: middle;
   }
-   .talk-view-left .talk-user-list .close-view{
-     width: 14px;
-     position: absolute;
-     right: 5px;
-     top: 16px;
-     display: none;
-   }
-   .talk-view-left .talk-user-list:hover .close-view{
-     display: block;
-   }
 
+  .talk-view-left .talk-user-list .close-view {
+    width: 14px;
+    position: absolute;
+    right: 5px;
+    top: 16px;
+    display: none;
+  }
+
+  .talk-view-left .talk-user-list:hover .close-view {
+    display: block;
+  }
   /*右区域*/
 
   .talk-view-right {
@@ -134,18 +190,21 @@
     vertical-align: middle;
   }
   /*窗口工具*/
-.talk-view-right .header .window-tool-con{
-  position: absolute;
-  right: 0px;
-  top: 10px;
-  height: 14px;
-  display: flex;
-  cursor: pointer;
-}
-.talk-view-right .header .window-tool-con img {
-  width: 14px;
-}
- .talk-view-right .header .window-tool-con img:hover{
+
+  .talk-view-right .header .window-tool-con {
+    position: absolute;
+    right: 0px;
+    top: 10px;
+    height: 14px;
+    display: flex;
+    cursor: pointer;
+  }
+
+  .talk-view-right .header .window-tool-con img {
+    width: 14px;
+  }
+
+  .talk-view-right .header .window-tool-con img:hover {
     background: #aaa;
   }
 
@@ -170,6 +229,24 @@
   .talk-view-right .edit .talk-tool-con img {
     height: 100%;
     margin-left: 10px;
+  }
+
+  .talk-view-right .edit .talk-tool-con .upload-con {
+    display: inline-block;
+    height: 100%;
+    width: 20px;
+    overflow: hidden;
+    background: red;
+  }
+
+  .talk-view-right .edit .talk-tool-con .upload-con img {
+    height: 100%;
+  }
+
+  .talk-view-right .edit .talk-tool-con .upload-con .upload {
+    position: absolute;
+    width: 20px;
+    height: 20px;
   }
 
   .edit-text {

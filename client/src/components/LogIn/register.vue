@@ -2,7 +2,7 @@
   <section class="register-mask" @click="hiddenMask" v-if="isShow">
     <div class="register-con animated bounceInDown">
       <div class="upload-con">
-        <input type="file" class="upload-img" v-on:change="uploadImg">
+        <input type="file" class="upload-img" @click.stop="uploadImg">
         <img :src="showImg" alt="">
       </div>
       <input type="text" class="user-name" placeholder="用户名" v-model="userName">
@@ -28,7 +28,6 @@ export default {
       userPW: '',
       userImg: '',
       showImg: './static/img/uploadImg.png',
-      pageShow: this.show
     }
   },
   computed: {
@@ -41,7 +40,6 @@ export default {
       var _this = this;
       var self = event.currentTarget;
       var file = self.files[0];
-      console.log(file.type)
       if(/\.(png|jpg)$/i.test(self.value)){
         var reader = new FileReader();
         reader.readAsDataURL(file);
@@ -67,6 +65,7 @@ export default {
       }
     },
     hiddenMask () {
+      console.log('ads');
       this.$emit('clickmask');
     }
   }

@@ -30,6 +30,15 @@
 <script>
   import TalkView from './talkView.vue'
   export default {
+    created() {
+      let name = this.$store.state.name;
+      let id = this.$store.state.id;
+      if(!name || !id){
+        this.$router.push('/login');
+      }else{
+        //连接websocket
+      }
+    },
     components: {
       'talk-view': TalkView
     },

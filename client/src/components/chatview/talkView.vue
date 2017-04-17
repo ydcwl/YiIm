@@ -20,7 +20,7 @@
       </div>
       <div class="edit">
         <div class="talk-tool-con">
-          <img src="../../assets/face.png">
+          <img src="../../assets/face.png" class="face">
           <div class="upload-con"><input type="file" class="upload" @change="uploadImg"><img src="../../assets/img.png"></div>
         </div>
         <div class="edit-text" contenteditable="true" @keyup.enter="send">
@@ -92,12 +92,7 @@
 
         reader.onload = function () {
           _this.selectImg = this.result;
-          let img = document.createElement('img');
-          img.src = _this.selectImg;
-          img.style.width = '30px';
-          img.style.height = '30px';
-          let edit = self.parentNode.parentNode.parentNode.children[1];
-          edit.appendChild(img);
+          console.log(_this.selectImg);
           file = '';
         };
         reader.readAsDataURL(file);
@@ -228,6 +223,8 @@
 
   .talk-view-right .edit .talk-tool-con img {
     height: 100%;
+  }
+  .talk-view-right .edit .talk-tool-con .face{
     margin-left: 10px;
   }
 
@@ -236,17 +233,14 @@
     height: 100%;
     width: 20px;
     overflow: hidden;
-    background: red;
-  }
-
-  .talk-view-right .edit .talk-tool-con .upload-con img {
-    height: 100%;
+    position: relative;
+    margin-left: 10px;
   }
 
   .talk-view-right .edit .talk-tool-con .upload-con .upload {
     position: absolute;
-    width: 20px;
-    height: 20px;
+    opacity: 0;
+    z-index: 5;
   }
 
   .edit-text {

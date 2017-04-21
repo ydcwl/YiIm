@@ -4,9 +4,9 @@
     <div class="user-panel">
       <div class="user-panel-header" @mousedown="down" @mousemove="move" @mouseup="up">
         <div class="user-panel-img">
-          <img src="../../assets/uploadImg.png">
+          <img :src="userInfo.image">
         </div>
-        <p class="user-panel-name">李小明</p>
+        <p class="user-panel-name">{{ userInfo.name }}</p>
         <div class="window-tool-con">
           <img src="../../assets/reduce.png" alt="" class="window-tool">
           <img src="../../assets/close.png" alt="" class="window-tool">
@@ -30,13 +30,12 @@
 <script>
   import TalkView from './talkView.vue'
   export default {
-    created() {
-      let name = this.$store.state.name;
-      let id = this.$store.state.id;
-      if(!name || !id){
-        this.$router.push('/login');
+    mounted() {
+      this.userId = this.$store.state.id;
+      if(!!this.userId){
+        this.getUserInfo();
       }else{
-        //连接websocket
+        this.$router.push({path: '/login'});
       }
     },
     components: {
@@ -46,7 +45,9 @@
       return {
         flag: false,
         offsetX: 0,
-        offsetY: 0
+        offsetY: 0,
+        userInfo: {},
+        userId: ''
       }
     },
     methods: {
@@ -69,7 +70,14 @@
       },
       chat() {
         console.log('dbclick')
+      },
+      getUserInfo() {
+        let _this = this;
+        _this.$http.get('/userInfo?id=' + _this.userId).then(data => {
+          _this.userInfo = data.data.userInfo;
+        })
       }
+
     }
   }
 

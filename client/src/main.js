@@ -7,7 +7,11 @@ import store from './vuex/store'
 import axios from 'axios'
 import MD5 from 'md5'
 
-Vue.prototype.$http = axios;
+
+
+Vue.prototype.$http = axios.create({
+  baseURL: 'http://127.0.0.1:3000'
+});
 Vue.prototype.$md5 = MD5;
 
 Vue.config.productionTip = false

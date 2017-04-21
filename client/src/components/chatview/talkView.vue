@@ -16,7 +16,9 @@
         </div>
       </div>
       <div class="show-view">
-        <p class="talk-list"></p>
+        <p class="talk-list">
+          <mes text="sadh" :info="userInfo"></mes>
+        </p>
       </div>
       <div class="edit">
         <div class="talk-tool-con">
@@ -31,15 +33,23 @@
   </section>
 </template>
 <script>
+  import mes from '../message/MyselfMes.vue'
   export default {
     mounted() {
       let len = this.userList.length;
       this.currentName = this.userList[len - 1].name;
       this.currentImg = this.userList[len - 1].img;
     },
+    components: {
+      'mes': mes
+    },
     data() {
       return {
         flag: false,
+        userInfo: {
+          username: 'cwl',
+          img: '/static/img/logo.png'
+        },
         userList: [{
             name: '我走了',
             img: '/static/img/uploadImg.png'

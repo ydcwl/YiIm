@@ -9,7 +9,7 @@ let query = (sql, data, cb) => {
     }else{
       conn.query(sql, data, (qerr, vals, fields) => {
         conn.release();
-        cb(qerr, vals, fields);
+        cb(qerr, vals);
       })
     }
   })

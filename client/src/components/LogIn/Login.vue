@@ -1,7 +1,7 @@
 <template>
   <div class="login-con">
-    <input type="text" class="user-name" placeholder="用户名">
-    <input type="password" class="user-pw" placeholder="密码">
+    <input type="text" class="user-name" placeholder="用户名" v-model="name">
+    <input type="password" class="user-pw" placeholder="密码" v-model="pw">
     <div class="circle-big">
       <div class="circle-mid">
         <div class="circle-sma" @click="postData">
@@ -17,7 +17,7 @@
         </div>
       </div>
     </div>
-    <register :show="showRegister" @adduser="register" @clickmask="hiddenRegisterPage"></register>
+    <register :show="showRegister" @adduser="registers" @clickmask="hiddenRegisterPage"></register>
   </div>
 </template>
 
@@ -30,22 +30,24 @@
     data() {
       return {
         showRegister: false,
+        name: '',
+        pw: ''
       }
     },
     methods: {
-      register(data) { //注册
+      registers(data) { //注册
         let _this = this;
-        this.$http.post(host + '/register', {name: data.userName, pw: _this.$md5(data.userPW), img: data.userImg})
+        console.log(data)
+        this.$http.post('/register', {
+            name: data.userName,
+            pw: _this.$md5(data.userPW),
+            img: data.userImg
+          })
           .then((data) => {
-           if(data.data.error_code == 200) {
-             let name = data.data.name;
-             let id = data.data.id;
-
-             _this.setUserInfo(name, id);
-           }else{
-            //注册不成功
-
-           }
+            if (data.code == 200) {
+              //注册成功
+              _this.setUserInfo(data.username, data.id);
+            }
           })
           .catch(err => {
             console.log(err)
@@ -60,14 +62,13 @@
       postData() { //登录
         //提交数据
         let _this = this;
-        this.$http.post(host + '/login', {name: 'cwl', pw: '123'})
+        this.$http.post('/login', {
+            name: _this.name,
+            pw: _this.$md5(_this.pw)
+          })
           .then(data => {
-            if (data.data.error_code == 200) {
-              let name = data.data.name;
-              let id = data.data.id;
-              _this.setUserInfo(name, id);
-            }else{
-              //登录不成功
+            if(data.data.code == 200){
+              _this.setUserInfo(data.data.userInfo.name, data.data.userInfo.id);
             }
           })
           .catch(err => {
@@ -77,7 +78,7 @@
       setUserInfo(name, id) {
         this.$store.dispatch('setname', name);
         this.$store.dispatch('setid', id);
-        this.$router.push('/');
+        this.$router.push({path: '/'});
       }
     }
   }

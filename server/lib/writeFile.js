@@ -1,18 +1,24 @@
 const fs = require('fs');
 const path = require('path');
 
-let writeFile = (userName, type, data) => {
-  return new Promise( (res, rej) => {
-    let imgPath = path.resolve(__dirname, '../public/upload/'+userName+'/'+type);
-    fs.writeFile(imgPath, data, 'base64', (err) => {
-      if(err){
-        rej(err)
-      }else{
-        let str = '/upload/'+userName+'/'+type;
-        res(str);
+let url = path.resolve(__dirname, '../public/upload'); //缓存当前路径
+
+let writeFile = (username, type, data) => {
+  return new Promise((resolve, reject) => {
+    let base64 = new Buffer(data, 'base64');
+    fs.writeFile(url + '/' + username + '/' + type, base64, function (err) {
+      if (err) {
+        fs.mkdir(url + '/' + username, (err) => {
+          if (err) console.log(err);
+          writeFile(username, type, data).then(data=>resolve(data));
+        })
+      } else {
+        resolve('/upload/' + username + '/' + type);
       }
     })
-  })
+  });
 }
+
+
 
 module.exports.writeFile = writeFile;

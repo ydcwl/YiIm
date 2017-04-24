@@ -16,7 +16,7 @@
         },
         data () {
             return {
-                times: this.time,   
+                times: this.time,
                 texts: this.text
             }
         }
@@ -32,7 +32,8 @@
         height: 20px;
         line-height: 20px;
         text-align: center;
-        background: #f0f0f0;
+        background: rgba(221, 221, 221, .5);
+        border: 1px solid #ddd;
         border-radius: 2px;
         color: #727272;
         font-size: 12px;

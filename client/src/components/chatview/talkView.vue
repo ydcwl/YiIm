@@ -1,15 +1,15 @@
 <template>
-  <section class="talk-view">
+  <section class="talk-view" v-show="isShow">
     <!--左边区域-->
     <div class="talk-view-left">
-      <p class="talk-user-list" v-for="v of userList" @click="changeTalk(v.name, v.img)">
-        <img :src="v.img"> {{ v.name }}<img src="../../assets/close.png" class="close-view">
+      <p class="talk-user-list" v-for="v of talkList" @click="changeTalk(v.username, v.userImage)">
+        <img :src="v.userImage"> {{ v.username }}<img src="../../assets/close.png" class="close-view">
       </p>
     </div>
     <!--右边区域-->
     <div class="talk-view-right">
       <div class="header" @mousedown="down" @mousemove="move" @mouseup="up">
-        <img :src="currentImg">{{ currentName }}
+        <img :src="currentU.img">{{ currentU.name }}
         <div class="window-tool-con">
           <img src="../../assets/reduce.png" alt="" class="window-tool">
           <img src="../../assets/close.png" alt="" class="window-tool">
@@ -17,7 +17,11 @@
       </div>
       <div class="show-view">
         <p class="talk-list">
-          <mes text="sadh" :info="userInfo"></mes>
+          <sys-mes :time="'2017-04-24'" :text="'系统信息'"></sys-mes>
+          <my-mes :info="userInfo" :text="'哈哈'"></my-mes>
+          <!--<my-img-mes :info="userInfo" :img="'【图片】'"></my-img-mes>-->
+          <other-mes :info="userInfo" :text="'呵呵'"></other-mes>
+          <!--<other-img-mes :info="userInfo" :img="'【图片】'"></other-img-mes>-->
         </p>
       </div>
       <div class="edit">
@@ -33,15 +37,37 @@
   </section>
 </template>
 <script>
-  import mes from '../message/MyselfMes.vue'
+  import SysMes from '../message/SystemMes.vue'
+  import MyMes from '../message/MyselfMes.vue'
+  // // import MyImgMes from '../message/MyselfImgMes.vue'
+  import OtherMes from '../message/OtherMes.vue'
+  // import OtherImgMes from '../message/OtherImgMes.vue'
   export default {
-    mounted() {
-      let len = this.userList.length;
-      this.currentName = this.userList[len - 1].name;
-      this.currentImg = this.userList[len - 1].img;
+    props: {
+      list: {
+        type: Array
+      },
+      current: {
+        type: Object
+      },
+      show: {
+        type: Boolean
+      }
     },
     components: {
-      'mes': mes
+      'sys-mes': SysMes,
+      'my-mes': MyMes,
+      // 'my-img-mes': MyImgMes,
+      'other-mes': OtherMes,
+      // 'other-img-mes': OtherImgMes
+    },
+    computed: {
+      talkList() {
+        return this.list;
+      },
+      isShow() {
+        return this.show;
+      }
     },
     data() {
       return {
@@ -50,25 +76,7 @@
           username: 'cwl',
           img: '/static/img/logo.png'
         },
-        userList: [{
-            name: '我走了',
-            img: '/static/img/uploadImg.png'
-          },
-          {
-            name: '我走了',
-            img: '/static/img/logo.png'
-          },
-          {
-            name: '我走了',
-            img: '/static/img/uploadImg.png'
-          },
-          {
-            name: '我走了',
-            img: '/static/img/uploadImg.png'
-          },
-        ],
-        currentName: '',
-        currentImg: '',
+        currentU: this.current,
         selectImg: ''
       }
     },
@@ -91,8 +99,10 @@
         this.flag = false;
       },
       changeTalk(name, img) {
-        this.currentName = name;
-        this.currentImg = img;
+        console.log('click')
+        this.currentU.name = name;
+        this.currentU.img = img;
+        console.log(this.currentU);
       },
       uploadImg() {
         let _this = this;
@@ -116,7 +126,6 @@
       },
       handerString(text) {
         let has = /^\w*<img/.test(text);
-
       }
     }
   }
@@ -234,7 +243,8 @@
   .talk-view-right .edit .talk-tool-con img {
     height: 100%;
   }
-  .talk-view-right .edit .talk-tool-con .face{
+
+  .talk-view-right .edit .talk-tool-con .face {
     margin-left: 10px;
   }
 

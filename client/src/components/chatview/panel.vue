@@ -13,17 +13,14 @@
         </div>
       </div>
       <div class="user-panel-list-con">
-        <p class="user-panel-list" @dblclick="chat">
-          <img src="../../assets/logo.png"> 我走了
-        </p>
-        <p class="user-panel-list">
-          <img src="../../assets/uploadImg.png"> 我走了
+        <p class="user-panel-list" @dblclick="chat(v)" v-for="v of friendList">
+          <img :src="v.userImage"> {{ v.username }}
         </p>
       </div>
     </div>
     <!--用户面板结束-->
     <!--聊天界面-->
-    <talk-view></talk-view>
+    <talk-view :list="talkList" :current="current" :show="show"></talk-view>
     <!--聊天界面结束-->
   </section>
 </template>
@@ -32,10 +29,13 @@
   export default {
     mounted() {
       this.userId = this.$store.state.id;
-      if(!!this.userId){
+      if (!!this.userId) {
         this.getUserInfo();
-      }else{
-        this.$router.push({path: '/login'});
+        this.getFriendList();
+      } else {
+        this.$router.push({
+          path: '/login'
+        });
       }
     },
     components: {
@@ -47,16 +47,25 @@
         offsetX: 0,
         offsetY: 0,
         userInfo: {},
-        userId: ''
+        friendList: [],
+        talkList: [],
+        userId: '',
+        current: {
+          name: '',
+          img: ''
+        },
+        show: false
       }
     },
     methods: {
       down() {
+        event.preventDefault();
         this.flag = true;
         this.offsetX = event.offsetX;
         this.offsetY = event.offsetY;
       },
       move() {
+        event.preventDefault();
         if (this.flag) {
           let self = event.currentTarget.parentNode;
           let x = event.clientX - this.offsetX;
@@ -66,15 +75,37 @@
         }
       },
       up() {
+        event.preventDefault();
         this.flag = false;
       },
-      chat() {
-        console.log('dbclick')
+      chat(user) {
+        event.preventDefault();
+        //let socket = io.connect('http://127.0.0.1:3000');
+        let len = this.talkList.length;
+        for (let i = 0; i < len; i++) {
+          if (user.username === this.talkList[i].username) {
+            return;
+          }
+        }
+        this.show = true;
+        this.talkList.push(user);
+        this.current.name = user.username;
+        this.current.img = user.userImage;
       },
       getUserInfo() {
         let _this = this;
         _this.$http.get('/userInfo?id=' + _this.userId).then(data => {
-          _this.userInfo = data.data.userInfo;
+          if (data.data.code == 200) {
+            _this.userInfo = data.data.userInfo;
+          }
+        })
+      },
+      getFriendList() {
+        let _this = this;
+        _this.$http.get('/friendList?id=' + _this.userId).then(data => {
+          if (data.data.code == 200) {
+            _this.friendList = data.data.list;
+          }
         })
       }
 
@@ -128,7 +159,8 @@
     width: 14px;
     margin-right: 8px;
   }
-  .user-panel-header .window-tool-con img:hover{
+
+  .user-panel-header .window-tool-con img:hover {
     background: #aaa;
   }
 

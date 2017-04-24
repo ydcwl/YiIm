@@ -30,9 +30,9 @@
     .oth i{
         box-sizing: content-box;
         display: inline-block;
-        border-left: 11px solid #fff;
+        border-left: 11px solid #f0f0f0;
         border-top: 8px solid #3399cc;
-        margin-left: -7px;
+        margin-left: -5px;
     }
     .oth .username{
          text-align: left;

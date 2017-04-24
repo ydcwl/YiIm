@@ -30,7 +30,7 @@
     .mys i{
         box-sizing: content-box;
         display: inline-block;
-        border-right: 11px solid #fff;
+        border-right: 11px solid #f0f0f0;
         border-top: 8px solid #CDD7E2;
         align-items: center;
     }

@@ -28,7 +28,8 @@
   import TalkView from './talkView.vue'
   export default {
     mounted() {
-      this.userId = this.$store.state.id;
+      this.userId = this.$store.getters.getId;
+      console.log(this.userId);
       if (!!this.userId) {
         this.getUserInfo();
         this.getFriendList();
@@ -52,7 +53,8 @@
         userId: '',
         current: {
           name: '',
-          img: ''
+          img: '',
+          id: ''
         },
         show: false
       }
@@ -91,6 +93,7 @@
         this.talkList.push(user);
         this.current.name = user.username;
         this.current.img = user.userImage;
+        this.current.id = user.id;
       },
       getUserInfo() {
         let _this = this;

@@ -7,16 +7,20 @@ Vue.use(Vuex);
 const state = {
   userInfo: {
     id: '',
-    name: ''
+    name: '',
+    img: ''
   }
 }
 
 const mutations = {
   setname(state, data) {
-    state.name = data;
+    state.userInfo.name = data;
   },
   setid(state, data) {
-    state.id = data;
+    state.userInfo.id = data;
+  },
+  setimg(state, data) {
+    state.userInfo.img = data;
   }
 }
 
@@ -27,6 +31,10 @@ const actions = {
   setid({ commit }, data) {
     commit('setid', data)
   }
+  ,
+  setimg({ commit }, data) {
+    commit('setimg', data)
+  }
 }
 
 const getters = {
@@ -35,6 +43,9 @@ const getters = {
   },
   getId: state => {
     return state.userInfo.id;
+  },
+  getImg: state => {
+    return state.userInfo.img;
   }
 }
 

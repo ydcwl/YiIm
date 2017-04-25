@@ -69,6 +69,28 @@
         return this.show;
       }
     },
+    mounted() {
+      let id = this.$store.getters.getId;
+      let that = this;
+      if (!!id) {
+        this.socket = io.connect('http://127.0.0.1:3000');
+        let info = {
+          id: this.$store.getters.getId,
+          name: this.$store.getters.getName,
+          img: this.$store.getters.getImg
+        }
+        console.log(info);
+        this.socket.emit('login', info);
+        this.socket.on('recive', (data) => {
+          if (that.checkIdExist(data.user.id)) {//存在
+            that.findListById(data.user.id).push(data);
+          } else {//不存在添加
+            this.talk.push({id: data.user.id, list: [data]});
+          }
+          that.showList = that.findListById(data.user.id);
+        })
+      }
+    },
     data() {
       return {
         flag: false,
@@ -77,7 +99,10 @@
           img: '/static/img/logo.png'
         },
         currentU: this.current,
-        selectImg: ''
+        selectImg: '',
+        socket: '',
+        talk: [],
+        showList: []
       }
     },
     methods: {
@@ -112,8 +137,9 @@
 
         reader.onload = function () {
           _this.selectImg = this.result;
-          console.log(_this.selectImg);
-          file = '';
+         //获取当前聊天的人的id
+         _this.socket.emit('chat', {img: _this.selectImg, self: {}, other: {} });
+         self.files = [];
         };
         reader.readAsDataURL(file);
 
@@ -126,6 +152,21 @@
       },
       handerString(text) {
         let has = /^\w*<img/.test(text);
+      },
+      checkIdExist(id) {
+        for (let item of this.talk) {
+          if (item.id === id) {
+            return true;
+          }
+        }
+        return false;
+      },
+      findListById(id) {
+        for (let item of this.talk) {
+          if (item.id === id) {
+            return item.list;
+          }
+        }
       }
     }
   }

@@ -68,16 +68,17 @@
           })
           .then(data => {
             if(data.data.code == 200){
-              _this.setUserInfo(data.data.userInfo.name, data.data.userInfo.id);
+              _this.setUserInfo(data.data.userInfo.name, data.data.userInfo.id, data.data.userInfo.image);
             }
           })
           .catch(err => {
             console.log(err)
           });
       },
-      setUserInfo(name, id) {
+      setUserInfo(name, id, img) {
         this.$store.dispatch('setname', name);
         this.$store.dispatch('setid', id);
+        this.$store.dispatch('setimg', img);
         this.$router.push({path: '/'});
       }
     }

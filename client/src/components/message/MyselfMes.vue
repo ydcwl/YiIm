@@ -1,7 +1,7 @@
 <template>
     <section class="mys">
-        <div class="username">{{ infos.username }}</div>
-        <p>{{ texts }}</p><i></i><span class="img"><img :src="infos.userimg"></span>
+        <div class="username">{{ infos.name }}</div>
+        <p>{{ texts }}</p><i></i><span class="img"><img :src="infos.img"></span>
     </section>
 </template>
 <script>

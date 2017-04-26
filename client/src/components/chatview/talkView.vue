@@ -2,7 +2,7 @@
   <section class="talk-view" v-show="isShow">
     <!--左边区域-->
     <div class="talk-view-left">
-      <p class="talk-user-list" v-for="v of talkList" @click="changeTalk(v.username, v.userImage)">
+      <p class="talk-user-list" v-for="v of talkList" @click="changeTalk(v.username, v.userImage, v.id)">
         <img :src="v.userImage"> {{ v.username }}<img src="../../assets/close.png" class="close-view">
       </p>
     </div>
@@ -17,11 +17,13 @@
       </div>
       <div class="show-view">
         <p class="talk-list">
-          <sys-mes :time="'2017-04-24'" :text="'系统信息'"></sys-mes>
-          <my-mes :info="userInfo" :text="'哈哈'"></my-mes>
+          <div v-for="v of showList">
+          <!--<sys-mes :time="'2017-04-24'" :text="'系统信息'"></sys-mes>-->
+          <my-mes :info="v.user" :text="v.text" v-if="v.from === 1"></my-mes>
           <!--<my-img-mes :info="userInfo" :img="'【图片】'"></my-img-mes>-->
-          <other-mes :info="userInfo" :text="'呵呵'"></other-mes>
+          <other-mes :info="v.user" :text="v.text" v-if="v.from === 2"></other-mes>
           <!--<other-img-mes :info="userInfo" :img="'【图片】'"></other-img-mes>-->
+        </div>
         </p>
       </div>
       <div class="edit">
@@ -71,24 +73,41 @@
     },
     mounted() {
       let id = this.$store.getters.getId;
-      let that = this;
+      let _this = this;
       if (!!id) {
         this.socket = io.connect('http://127.0.0.1:3000');
-        let info = {
+        _this.info = {
           id: this.$store.getters.getId,
           name: this.$store.getters.getName,
           img: this.$store.getters.getImg
         }
-        console.log(info);
-        this.socket.emit('login', info);
+        console.log(_this.info);
+        this.socket.emit('login', _this.info);
         this.socket.on('recive', (data) => {
-          if (that.checkIdExist(data.user.id)) {//存在
-            that.findListById(data.user.id).push(data);
-          } else {//不存在添加
-            this.talk.push({id: data.user.id, list: [data]});
+          console.log(data);
+          if (_this.checkIdExist(data.user.id)) { //存在
+            _this.findListById(data.user.id).push(data);
+          } else { //不存在添加
+            _this.talk.push({
+              id: data.user.id,
+              list: [data]
+            });
           }
-          that.showList = that.findListById(data.user.id);
+          _this.showList = _this.findListById(data.user.id);
         })
+      }
+    },
+    updated() {
+      let nodes = this.$el.children;
+      for(let i of node) {
+        if(i.className === 'talk-view-right') {
+          let childrens = i.children;
+          for(let item of childrens){
+            if(item.className === 'show-view') {
+              item
+            }
+          }
+        }
       }
     },
     data() {
@@ -98,6 +117,7 @@
           username: 'cwl',
           img: '/static/img/logo.png'
         },
+        info: {},
         currentU: this.current,
         selectImg: '',
         socket: '',
@@ -123,10 +143,13 @@
       up() {
         this.flag = false;
       },
-      changeTalk(name, img) {
+      changeTalk(name, img, id) {
         console.log('click')
         this.currentU.name = name;
         this.currentU.img = img;
+        this.currentU.id = id;
+
+        this.showList = this.findListById(id);
         console.log(this.currentU);
       },
       uploadImg() {
@@ -137,21 +160,55 @@
 
         reader.onload = function () {
           _this.selectImg = this.result;
-         //获取当前聊天的人的id
-         _this.socket.emit('chat', {img: _this.selectImg, self: {}, other: {} });
-         self.files = [];
+
+          //获取当前聊天的人的id
+          _this.socket.emit('chat', {
+            img: _this.selectImg,
+            self: _this.info,
+            other: _this.currentU
+          });
+          _this.findListById(_this.currentU.id).push({
+            img: _this.selectImg,
+            user: _this.info,
+            type: 2
+          });
+          self.files = [];
         };
         reader.readAsDataURL(file);
 
       },
       send() {
+        let _this = this;
         let self = event.currentTarget;
-        let text = self.innerHTML;
-        this.handerString(text);
-        self.innerHTML = '';
-      },
-      handerString(text) {
-        let has = /^\w*<img/.test(text);
+        let text = self.innerText;
+        //this.handerString(text);
+        _this.socket.emit('chat', {
+          text: text,
+          self: _this.info,
+          other: _this.currentU,
+          type: true
+        });
+
+        if (_this.checkIdExist(_this.currentU.id)) { //存在
+          _this.findListById(_this.currentU.id).push({
+            text: text,
+            user: _this.info,
+            type: 1,
+            from: 1
+          });
+        } else { //不存在添加
+          _this.talk.push({
+            id: _this.currentU.id,
+            list: [{
+              text: text,
+              user: _this.info,
+              type: 1,
+              from: 1
+            }]
+          });
+        }
+        self.innerText = '';
+        _this.showList = _this.findListById(_this.currentU.id);
       },
       checkIdExist(id) {
         for (let item of this.talk) {
@@ -167,7 +224,10 @@
             return item.list;
           }
         }
-      }
+      },
+      findNodeByClassName(className) {
+
+      },
     }
   }
 
@@ -266,7 +326,7 @@
   .talk-view-right .show-view {
     width: 100%;
     height: 300px;
-    overflow: auto;
+    overflow-y: auto;
   }
 
   .talk-view-right .edit {

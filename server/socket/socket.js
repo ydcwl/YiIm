@@ -1,6 +1,14 @@
 'use strict'
 
-const findSocketByName = require('../lib/findSocketByName.js');
+//const findSocketByName = require('../lib/findSocketByName.js');
+function findSocketByName(userList, name) {
+  for(let u of userList){
+    if(u.info.name === name) {
+      return u.socket;
+    }
+  }
+  return null;
+}
 
 let userList = [];
 module.exports.use = (io) => {
@@ -9,15 +17,18 @@ module.exports.use = (io) => {
     socket.on('login', (data) => {
       userList.push({socket: socket, info: data});
     })
-    console.log(userList);
+    //console.log(userList);
     //单人聊天, data.type 为true则为单聊
     socket.on('chat', (data) => {
+      console.log(data);
       if(data.type) {//单聊
+        console.log(userList);
         let id = findSocketByName(userList, data.other.name).id;
+        console.log(id);
         if(!data.img) {//文字
-          socket.to(id).emit('recive', {text: data.text, user: data.self, type: 1});
+          socket.to(id).emit('recive', {text: data.text, user: data.self, type: 1, from: 2});
         }else{//图片
-          socket.to(id).emit('recive', {img: data.img, user: data.self, type: 2});
+          socket.to(id).emit('recive', {img: data.img, user: data.self, type: 2, from: 2});
         }
       }else{//群聊
 

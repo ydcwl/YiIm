@@ -1,7 +1,7 @@
 <template>
     <section class="oth">
-       <div class="username">{{ infos.username }}</div>
-       <span class="img"><img :src="infos.userimg"></span> <i></i><p><img :src="imgs"></p>
+       <div class="username">{{ infos.name }}</div>
+       <span class="img"><img :src="infos.img"></span> <i></i><p><img :src="imgs"></p>
     </section>
 </template>
 <script>

@@ -15,16 +15,16 @@
           <img src="../../assets/close.png" alt="" class="window-tool">
         </div>
       </div>
-      <div class="show-view">
-        <p class="talk-list">
+      <div class="show-view" id="window-show">
+        <div class="talk-list" id="window-all">
           <div v-for="v of showList">
-          <!--<sys-mes :time="'2017-04-24'" :text="'系统信息'"></sys-mes>-->
-          <my-mes :info="v.user" :text="v.text" v-if="v.from === 1"></my-mes>
-          <!--<my-img-mes :info="userInfo" :img="'【图片】'"></my-img-mes>-->
-          <other-mes :info="v.user" :text="v.text" v-if="v.from === 2"></other-mes>
-          <!--<other-img-mes :info="userInfo" :img="'【图片】'"></other-img-mes>-->
+            <!--<sys-mes :time="'2017-04-24'" :text="'系统信息'"></sys-mes>-->
+            <my-mes :info="v.user" :text="v.text" v-if="(v.from === 1 && v.type === 1)"></my-mes>
+            <my-img-mes :info="v.user" :img="v.img" v-if="(v.from === 1 && v.type === 2)"></my-img-mes>
+            <other-mes :info="v.user" :text="v.text" v-if="(v.from === 2 && v.type === 1)"></other-mes>
+            <other-img-mes :info="v.user" :img="v.img" v-if="(v.from === 2 && v.type === 2)"></other-img-mes>
+          </div>
         </div>
-        </p>
       </div>
       <div class="edit">
         <div class="talk-tool-con">
@@ -41,9 +41,9 @@
 <script>
   import SysMes from '../message/SystemMes.vue'
   import MyMes from '../message/MyselfMes.vue'
-  // // import MyImgMes from '../message/MyselfImgMes.vue'
+  import MyImgMes from '../message/MyselfImgMes.vue'
   import OtherMes from '../message/OtherMes.vue'
-  // import OtherImgMes from '../message/OtherImgMes.vue'
+  import OtherImgMes from '../message/OtherImgMes.vue'
   export default {
     props: {
       list: {
@@ -59,9 +59,9 @@
     components: {
       'sys-mes': SysMes,
       'my-mes': MyMes,
-      // 'my-img-mes': MyImgMes,
+      'my-img-mes': MyImgMes,
       'other-mes': OtherMes,
-      // 'other-img-mes': OtherImgMes
+      'other-img-mes': OtherImgMes
     },
     computed: {
       talkList() {
@@ -93,22 +93,27 @@
               list: [data]
             });
           }
-          _this.showList = _this.findListById(data.user.id);
-        })
+          if (data.user.id === _this.currentU.id) {
+            _this.showList = _this.findListById(data.user.id);
+          }
+        });
+
+        //监听窗口关闭
+        //onbeforeunload
+        window.onbeforeunload = function () {
+          alert('关闭')
+        }
       }
     },
     updated() {
-      let nodes = this.$el.children;
-      for(let i of node) {
-        if(i.className === 'talk-view-right') {
-          let childrens = i.children;
-          for(let item of childrens){
-            if(item.className === 'show-view') {
-              item
-            }
-          }
-        }
-      }
+      console.log('updated change');
+        let outer = document.querySelector('#window-show');
+        //let inner = document.querySelector('#window-all');
+
+        let oh = outer.offsetHeight;
+        let ih = outer.scrollHeight;
+
+        outer.scrollTop = (ih - oh) > 0 ? (ih - oh) : 0;
     },
     data() {
       return {
@@ -165,14 +170,30 @@
           _this.socket.emit('chat', {
             img: _this.selectImg,
             self: _this.info,
-            other: _this.currentU
+            other: _this.currentU,
+            type: true
           });
-          _this.findListById(_this.currentU.id).push({
-            img: _this.selectImg,
-            user: _this.info,
-            type: 2
-          });
-          self.files = [];
+          if (_this.checkIdExist(_this.currentU.id)) { //存在
+            console.log('come')
+            _this.findListById(_this.currentU.id).push({
+              img: _this.selectImg,
+              user: _this.info,
+              type: 2,
+              from: 1
+            });
+          } else { //不存在添加
+            console.log('come')
+            _this.talk.push({
+              id: _this.currentU.id,
+              list: [{
+                img: _this.selectImg,
+                user: _this.info,
+                type: 2,
+                from: 1
+              }]
+            });
+          }
+          _this.showList = _this.findListById(_this.currentU.id);
         };
         reader.readAsDataURL(file);
 
@@ -225,9 +246,15 @@
           }
         }
       },
-      findNodeByClassName(className) {
-
-      },
+      // findNodeByClassName(nodes, className) {
+      //   for (let i of nodes) {
+      //     if (i.className === className) {
+      //       return i;
+      //     } else {
+      //       this.findNodeByClassName(i, className);
+      //     }
+      //   }
+      // },
     }
   }
 
